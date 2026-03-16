@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>赛季荣誉值计算器</title>
+    <style>
+        :root {
+            --primary: #c0392b;
+            --bg: #f5f6fa;
+            --card-bg: #ffffff;
+            --text: #2f3640;
+            --border: #dcdde1;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 10px;
+        }
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border: 1px solid var(--border);
+        }
+        .card h2 {
+            margin-top: 0;
+            font-size: 1.2rem;
+            color: var(--primary);
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 8px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        .form-group label {
+            flex: 1;
+            min-width: 200px;
+            font-weight: 500;
+        }
+        .form-group input {
+            flex: 1;
+            min-width: 150px;
+            padding: 8px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        .note {
+            font-size: 0.85rem;
+            color: #7f8fa6;
+            margin-top: -10px;
+            margin-bottom: 15px;
+            display: block;
+        }
+        .result-box {
+            background-color: var(--text);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            position: sticky;
+            bottom: 20px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #576574;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #e1b12c;
+        }
+        @media (max-width: 600px) {
+            .form-group { flex-direction: column; align-items: flex-start; }
+            .form-group input { width: 100%; box-sizing: border-box; margin-top: 5px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>赛季荣誉值计算器</h1>
+
+    <div class="card">
+        <h2>第一篇：攻城荣誉</h2>
+        <div class="form-group">
+            <label>1. 攻城杀敌数 (上限100荣誉)</label>
+            <input type="number" id="siegeKills" placeholder="输入杀敌数" oninput="calculate()">
+        </div>
+        <div class="form-group">
+            <label>2. 攻城拆迁值</label>
+            <input type="number" id="siegeDemo" placeholder="输入拆迁值" oninput="calculate()">
+        </div>
+        <div class="form-group">
+            <label>3. 杀敌/拆迁 榜一 (次)</label>
+            <input type="number" id="rank1" placeholder="输入上榜次数" oninput="calculate()">
+        </div>
+        <div class="form-group">
+            <label>3. 杀敌/拆迁 榜二 (次)</label>
+            <input type="number" id="rank2" placeholder="输入上榜次数" oninput="calculate()">
+        </div>
+        <div class="form-group">
+            <label>3. 杀敌/拆迁 榜三 (次)</label>
+            <input type="number" id="rank3" placeholder="输入上榜次数" oninput="calculate()">
+        </div>
+        <span class="note">*注意：刷同一个城需要24小时才计入荣誉。</span>
+    </div>
+
+    <div class="card">
+        <h2>第二篇：势力值</h2>
+        <div class="form-group">
+            <label>当前势力值 (上限300荣誉)</label>
+            <input type="number" id="power" placeholder="输入势力值" oninput="calculate()">
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>第三篇：武勋值</h2>
+        <div class="form-group">
+            <label>当前武勋值</label>
+            <input type="number" id="merit" placeholder="输入武勋值" oninput="calculate()">
+        </div>
+        <span class="note">*注意：不要跟同一个人一直在一个地方刷，不然不计入荣誉。</span>
+    </div>
+
+    <div class="card">
+        <h2>第四篇：征战</h2>
+        <div class="form-group">
+            <label>1. 杀敌数 (上限200荣誉)</label>
+            <input type="number" id="fightKills" placeholder="输入打架杀敌数" oninput="calculate()">
+        </div>
+        <div class="form-group">
+            <label>2. 翻地数 (块) (上限100荣誉)</label>
+            <input type="number" id="flipLand" placeholder="输入翻地数量" oninput="calculate()">
+        </div>
+        <div class="form-group">
+            <label>3. 拆迁值 (上限200荣誉)</label>
+            <input type="number" id="fightDemo" placeholder="输入打架拆迁值" oninput="calculate()">
+        </div>
+        <span class="note">*注意：24小时内连续翻一块地是不计入荣誉。截图原文中写“每1000荣誉值≈1荣誉”疑似笔误，此处按“拆迁值”计算。</span>
+    </div>
+
+    <div class="result-box">
+        <div class="result-row">
+            <span>第一篇 攻城荣誉:</span>
+            <span id="resSiege">0</span>
+        </div>
+        <div class="result-row">
+            <span>第二篇 势力荣誉:</span>
+            <span id="resPower">0</span>
+        </div>
+        <div class="result-row">
+            <span>第三篇 武勋荣誉:</span>
+            <span id="resMerit">0</span>
+        </div>
+        <div class="result-row">
+            <span>第四篇 打架荣誉:</span>
+            <span id="resFight">0</span>
+        </div>
+        <div class="total-row">
+            <span>总计荣誉值:</span>
+            <span id="resTotal">0</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    function calculate() {
+        // --- 第一篇：攻城 ---
+        let sKills = Number(document.getElementById('siegeKills').value) || 0;
+        let sDemo = Number(document.getElementById('siegeDemo').value) || 0;
+        let rank1 = Number(document.getElementById('rank1').value) || 0;
+        let rank2 = Number(document.getElementById('rank2').value) || 0;
+        let rank3 = Number(document.getElementById('rank3').value) || 0;
+
+        let sKillsHonor = Math.min(100, Math.floor(sKills / 10000));
+        let sDemoHonor = 0;
+        if (sDemo <= 100000) {
+            sDemoHonor = Math.floor(sDemo / 1000);
+        } else {
+            // 超过10万的部分
+            sDemoHonor = 100 + Math.floor((sDemo - 100000) / 3000);
+        }
+        let rankHonor = (rank1 * 30) + (rank2 * 20) + (rank3 * 10);
+        
+        let totalSiege = sKillsHonor + sDemoHonor + rankHonor;
+        document.getElementById('resSiege').innerText = totalSiege;
+
+
+        // --- 第二篇：势力值 ---
+        let power = Number(document.getElementById('power').value) || 0;
+        let powerHonor = 0;
+        if (power <= 30000) {
+            powerHonor = (power / 10000) * 70;
+        } else {
+            // 前3万拿210，后续按35算
+            powerHonor = 210 + ((power - 30000) / 10000) * 35;
+        }
+        // 上限300
+        let totalPower = Math.min(300, Math.floor(powerHonor));
+        document.getElementById('resPower').innerText = totalPower;
+
+
+        // --- 第三篇：武勋值 ---
+        let merit = Number(document.getElementById('merit').value) || 0;
+        let meritHonor = 0;
+        if (merit <= 2000000) {
+            meritHonor = merit / 10000;
+        } else {
+            // 前200万拿200，后续2.5万拿1 (例如多出300万 = 120，总计500万=320，符合规则逻辑)
+            meritHonor = 200 + ((merit - 2000000) / 25000);
+        }
+        let totalMerit = Math.floor(meritHonor);
+        document.getElementById('resMerit').innerText = totalMerit;
+
+
+        // --- 第四篇：打架 ---
+        let fKills = Number(document.getElementById('fightKills').value) || 0;
+        let fLand = Number(document.getElementById('flipLand').value) || 0;
+        let fDemo = Number(document.getElementById('fightDemo').value) || 0;
+
+        // 杀敌逻辑：不足1000万每10万=1，超过部分每20万=1。上限200
+        let fKillsHonor = 0;
+        if (fKills <= 10000000) {
+            fKillsHonor = fKills / 100000;
+        } else {
+            fKillsHonor = 100 + ((fKills - 10000000) / 200000);
+        }
+        fKillsHonor = Math.min(200, Math.floor(fKillsHonor));
+
+        // 翻地逻辑：上限100
+        let fLandHonor = Math.min(100, Math.floor(fLand / 10));
+
+        // 拆迁逻辑：上限200
+        let fDemoHonor = Math.min(200, Math.floor(fDemo / 1000));
+
+        let totalFight = fKillsHonor + fLandHonor + fDemoHonor;
+        document.getElementById('resFight').innerText = totalFight;
+
+
+        // --- 总计 ---
+        let grandTotal = totalSiege + totalPower + totalMerit + totalFight;
+        document.getElementById('resTotal').innerText = grandTotal;
+    }
+</script>
+
+</body>
+</html>
